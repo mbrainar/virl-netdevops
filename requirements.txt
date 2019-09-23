@@ -1,0 +1,5 @@
+virlutils==0.8.8
+pyats==19.8
+genie==19.8
+Jinja2==2.10.1
+#simple-client==0.1.9b12 #install from virl2 controller
