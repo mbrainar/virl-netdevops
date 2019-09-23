@@ -1,17 +1,25 @@
 .idea/
 .vagrant/
+.DS_Store
 
 # NSO created files/directories
-*/logs/
-*/ncs-cdb/
-*/packages/
-*/scripts/
-*/state/
-*/target/
-*/netsim/
-*/ncs.conf
-*/README.ncs
-*/storedstate
+logs/
+ncs-cdb/
+packages/
+scripts/
+state/
+target/
+netsim/
+ncs.conf
+README.ncs
+storedstate
+
+# VIRL2 breakout files
+labs.yaml
+config.yaml
+
+# VIRL1 virlutils config
+.virlrc
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
