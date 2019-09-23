@@ -9,6 +9,9 @@
 */state/
 */target/
 */netsim/
+*/ncs.conf
+*/README.ncs
+*/storedstate
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
