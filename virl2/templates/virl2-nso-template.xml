@@ -24,6 +24,7 @@
     <device-type>
       <cli>
         <ned-id xmlns:{{ node.ned.prefix }}="{{ node.ned.ns }}">{{ node.ned.prefix }}:{{ node.ned.ned }}</ned-id>
+        <protocol>ssh</protocol>
       </cli>
     </device-type>
     <state>
@@ -31,4 +32,4 @@
     </state>
   </device>
   {% endfor %}
-</devices>f
+</devices>
