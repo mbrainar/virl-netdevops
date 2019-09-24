@@ -44,6 +44,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosv-158-3
     tags: []
     interfaces:
@@ -75,6 +76,8 @@ nodes:
       hostname core-2
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain name example.com
+      crypto key gen rsa mod 1024
       int Loopback0
         ip addr 10.1.1.2 255.255.255.0
       interface GigabitEthernet0/0
@@ -103,6 +106,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosv-158-3
     tags: []
     interfaces:
@@ -134,6 +138,8 @@ nodes:
       hostname dist-1
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain name example.com
+      crypto key gen rsa mod 1024
       vlan 20
         name vlan-20
       vlan 30
@@ -182,6 +188,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosvl2-2019
     tags: []
     interfaces:
@@ -221,6 +228,8 @@ nodes:
       hostname dist-2
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain name example.com
+      crypto key gen rsa mod 1024
       vlan 20
         name vlan-20
       vlan 30
@@ -269,6 +278,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosvl2-2019
     tags: []
     interfaces:
@@ -308,6 +318,8 @@ nodes:
       hostname acc-1
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain name example.com
+      crypto key gen rsa mod 1024
       vlan 20
         name vlan-20
       vlan 30
@@ -331,6 +343,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosvl2-2019
     tags: []
     interfaces:
@@ -358,7 +371,8 @@ nodes:
       hostname acc-2
       username cisco priv 15 secret cisco
       enable secret cisco
-      ip domain-name
+      ip domain name example.com
+      crypto key gen rsa mod 1024
       vlan 20
         name vlan-20
       vlan 30
@@ -382,6 +396,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosvl2-2019
     tags: []
     interfaces:

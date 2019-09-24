@@ -6,21 +6,23 @@ lab:
   version: 0.0.2
 nodes:
   - id: n0
-    label: core-1
+    label: test-core-1
     node_definition: iosv
     x: -500
     y: -200
     configuration: |-
-      hostname core-1
+      hostname test-core-1
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain-name example.com
+      crypto key gen rsa mod 1024
       int Loopback0
         ip addr 10.1.1.1 255.255.255.0
       interface GigabitEthernet0/0
         no shut
         ip address 10.10.10.1 255.255.255.252
         description core-2
-      interface GigabitEthernet0/3
+      interface GigabitEthernet0/1
         no shut
         ip address dhcp
         description Management
@@ -32,6 +34,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosv-158-3
     tags: []
     interfaces:
@@ -42,26 +45,28 @@ nodes:
         slot: 0
         label: GigabitEthernet0/0
         type: physical
-      - id: i4
-        slot: 3
-        label: GigabitEthernet0/3
+      - id: i2
+        slot: 1
+        label: GigabitEthernet0/1
         type: physical
   - id: n1
-    label: core-2
+    label: test-core-2
     node_definition: iosv
     x: -350
     y: -200
     configuration: |-
-      hostname core-2
+      hostname test-core-2
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain-name example.com
+      crypto key gen rsa mod 1024
       int Loopback0
         ip addr 10.1.1.2 255.255.255.0
       interface GigabitEthernet0/0
         no shut
         ip address 10.10.10.2 255.255.255.252
         description core-1
-      interface GigabitEthernet0/3
+      interface GigabitEthernet0/1
         no shut
         ip address dhcp
         description Management
@@ -73,6 +78,7 @@ nodes:
         exec-timeout 0 0
       line vty 0 4
         login local
+        transport input ssh
     image_definition: iosv-158-3
     tags: []
     interfaces:
@@ -83,9 +89,9 @@ nodes:
         slot: 0
         label: GigabitEthernet0/0
         type: physical
-      - id: i4
-        slot: 3
-        label: GigabitEthernet0/3
+      - id: i2
+        slot: 1
+        label: GigabitEthernet0/1
         type: physical
   - id: n6
     label: ext-conn-0
@@ -133,10 +139,10 @@ links:
   - id: l11
     i1: i1
     n1: n7
-    i2: i4
+    i2: i2
     n2: n0
   - id: l12
     i1: i2
     n1: n7
-    i2: i4
+    i2: i2
     n2: n1
