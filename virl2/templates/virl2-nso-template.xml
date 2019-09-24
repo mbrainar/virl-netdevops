@@ -13,18 +13,17 @@
       </umap>
     </group>
   </authgroups>
-  {% for node in inventory %}
+  {% for node in context %}
   <device>
-    <name>{{ node.name }}</name>
-    <address>{{ node.address }}</address>
+    <name>{{ node.node_label }}</name>
+    <address>{{ node.address[0] }}</address>
     <ssh>
       <host-key-verification>none</host-key-verification>
     </ssh>
     <authgroup>virl</authgroup>
     <device-type>
       <cli>
-        <ned-id xmlns:{{ node.prefix }}="{{ node.ns }}">{{ node.prefix}}:{{ node.ned }}</ned-id>
-        <protocol>{{ node.protocol }}</protocol>
+        <ned-id xmlns:{{ node.ned.prefix }}="{{ node.ned.ns }}">{{ node.ned.prefix }}:{{ node.ned.ned }}</ned-id>
       </cli>
     </device-type>
     <state>

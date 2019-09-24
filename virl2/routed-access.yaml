@@ -14,6 +14,8 @@ nodes:
       hostname core-1
       username cisco priv 15 secret cisco
       enable secret cisco
+      ip domain name example.com
+      crypto key gen rsa mod 1024
       int Loopback0
         ip addr 10.1.1.1 255.255.255.0
       interface GigabitEthernet0/0

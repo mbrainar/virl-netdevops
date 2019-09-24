@@ -21,6 +21,9 @@ config.yaml
 # VIRL1 virlutils config
 .virlrc
 
+# App-generated files
+virl2-nso-inventory.xml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
