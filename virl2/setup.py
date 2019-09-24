@@ -9,8 +9,8 @@ import json
 controller = "https://192.168.34.11"
 controller_user = "admin"
 controller_password = "Cisco123"
-lab_definition_path = "test-network.yaml"
 lab_name = "routed-access"
+lab_definition_path = "{}.yaml".format(lab_name)
 path = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -28,7 +28,8 @@ def clean_up():
 def get_my_lab(client, lab_name):
     labs = client.all_labs()
     for lab in labs:
-        if lab.name == lab_name or lab.id == "2741a7":
+        if lab.name == lab_name or lab.id == "ca2afb":
+        # if lab.name == lab_name:
             return client.join_existing_lab(lab.id, sync_lab=True)
 
 # Import lab from lab definition YAML file
@@ -45,6 +46,7 @@ def extract_addresses(lab):
         interfaces = node.physical_interfaces()
         for interface in interfaces:
             if interface.discovered_ipv4:
+                print("  Found address {} on {} interface {}".format(interface.discovered_ipv4, node.label, interface.label))
                 addresses.append({
                     "node_id": node.id,
                     "node_label": node.label,
@@ -66,9 +68,9 @@ def ned_mapping(node_definition):
                 'ned': "cisco-ios-xr",
                 'ns': "http://tail-f.com/ned/cisco-ios-xr-id"}
     elif 'csr' in node_definition or 'ios' in node_definition:
-        return {'prefix': "ios-id",
-                'ned': "cisco-ios",
-                'ns': "urn:ios-id"}
+        return {'prefix': "cisco-ios-cli-3.8",
+                'ned': "cisco-ios-cli-3.8",
+                'ns': "http://tail-f.com/ns/ned-id/cisco-ios-cli-3.8"}
 
 # Render NSO inventory template
 # Returns: rendered template object
@@ -119,9 +121,14 @@ def main():
     except:
         print("Unable to start lab")
 
+    # Sync DHCP addresses to lab object
+    my_lab.sync_layer3_addresses()
+
     # Extract external connector addresses
+    print("Extracting DHCP addresses from lab {}".format(my_lab.id))
     addresses = extract_addresses(my_lab)
     # print(json.dumps(addresses, indent=4))
+    print("Writing NSO inventory file")
     create_nso_inventory(addresses)
 
 
