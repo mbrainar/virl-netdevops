@@ -1,7 +1,7 @@
 <devices xmlns="http://tail-f.com/ns/ncs">
   <authgroups>
     <group>
-      <name>virl</name>
+      <name>{{ lab_name }}</name>
       <default-map>
         <remote-name>cisco</remote-name>
         <remote-password>cisco</remote-password>
@@ -13,14 +13,20 @@
       </umap>
     </group>
   </authgroups>
-  {% for node in context %}
+  <device-group>
+    <name>{{ lab_name }}</name>
+    {% for node in nodes %}
+    <device-name>{{ node.node_label }}</device-name>
+    {% endfor %}
+  </device-group>
+  {% for node in nodes %}
   <device>
     <name>{{ node.node_label }}</name>
     <address>{{ node.address[0] }}</address>
     <ssh>
       <host-key-verification>none</host-key-verification>
     </ssh>
-    <authgroup>virl</authgroup>
+    <authgroup>{{ lab_name }}</authgroup>
     <device-type>
       <cli>
         <ned-id xmlns:{{ node.ned.prefix }}="{{ node.ned.ns }}">{{ node.ned.prefix }}:{{ node.ned.ned }}</ned-id>
