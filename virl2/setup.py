@@ -17,6 +17,7 @@ controller_password = "Cisco123"
 lab_name = "routed-access"
 lab_definition_path = "{}.yaml".format(lab_name)
 
+
 # NSO variables
 nso_host = "localhost"
 nso_port = "8080"
@@ -100,17 +101,58 @@ def render_template(template_filename, context):
 
 
 # Create NSO inventory file
-def create_nso_inventory(addresses):
-    output_filename = "virl2-nso-inventory.xml"
-    context = {'context': addresses}
+def create_nso_inventory(lab_name, addresses, output_filename):
+    context = {'lab_name': lab_name,
+               'nodes': addresses}
     with open(output_filename, 'w') as f:
-        xml = render_template('virl2-nso-template.xml', context)
+        xml = render_template('template-load.xml', context)
         f.write(xml)
+
+
+# Create NSO authgroup
+# def create_nso_authgroup(lab_name, output_filename):
+#     context = {'lab_name': lab_name}
+#     with open(output_filename, 'w') as f:
+#         xml = render_template('template-authgroup.xml', context)
+#         f.write(xml)
 
 
 # Start NSO
 def start_nso():
-    print(os.system("./setup.sh -n"))
+    print(os.system("./nso-setup.sh -n"))
+
+
+# Load XML into NSO
+def load_nso(xml_file):
+    print(os.system("./nso-setup.sh -l {}".format(xml_file)))
+
+
+# Add devices to NSO
+def add_nso_authgroup(xml_file):
+    url = "{}/restconf/data/tailf-ncs:devices/authgroups".format(nso_url)
+    with open(xml_file, 'r') as f:
+        payload = f.read()
+    # print(payload)
+    headers = {
+        'Accept': "application/yang-data+json",
+        'Content-Type': "application/yang-data+xml"
+        }
+    response = requests.request("POST", url, data=payload, headers=headers, auth=(nso_user, nso_pass))
+    print(response.text)
+
+
+# Add devices to NSO
+def add_nso_devices(xml_file):
+    url = "{}/restconf/data/tailf-ncs:devices".format(nso_url)
+    with open(xml_file, 'r') as f:
+        payload = f.read()
+    # print(payload)
+    headers = {
+        'Accept': "application/yang-data+json",
+        'Content-Type': "application/yang-data+xml"
+        }
+    response = requests.request("POST", url, data=payload, headers=headers, auth=(nso_user, nso_pass))
+    print(response.text)
 
 
 # Main function of setup app
@@ -152,13 +194,31 @@ def main():
     print("Extracting DHCP addresses from lab {}".format(my_lab.id))
     addresses = extract_addresses(my_lab)
     # print(json.dumps(addresses, indent=4))
-    print("Writing NSO inventory file")
-    create_nso_inventory(addresses)
 
-    # Start NSO
+    # Render NSO templates & write to files
+    # authgroup
+    # authgroup_filename = "{}-authgroup.xml".format(lab_name)
+    # print("Writing NSO authgroup file to {}".format(authgroup_filename))
+    # create_nso_authgroup(lab_name, authgroup_filename)
+    # devices
+    inventory_filename = "{}-load.xml".format(lab_name)
+    print("Writing NSO inventory file to {}".format(inventory_filename))
+    create_nso_inventory(lab_name, addresses, inventory_filename)
+
+    # Check if NSO is running and if not, start it
     print("Starting NSO")
     start_nso()
 
+    # Add authgroup to NSO
+    # print("Adding authgroup to NSO")
+    # add_nso_authgroup(authgroup_filename)
+
+    # Add devices to NSO
+    # print("Adding devices to NSO")
+    # add_nso_devices(inventory_filename)
+
+    # Load XML into NSO
+    load_nso(inventory_filename)
 
 if __name__ == "__main__":
     main()
