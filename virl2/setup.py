@@ -4,14 +4,25 @@ from simple_client import ClientLibrary
 import logging
 from datetime import datetime
 import json
+import requests
 
 # Variables
+path = os.path.dirname(os.path.abspath(__file__))
+
+# VIRL Variables
 controller = "https://192.168.34.11"
 controller_user = "admin"
 controller_password = "Cisco123"
+
 lab_name = "routed-access"
 lab_definition_path = "{}.yaml".format(lab_name)
-path = os.path.dirname(os.path.abspath(__file__))
+
+# NSO variables
+nso_host = "localhost"
+nso_port = "8080"
+nso_url = "http://{}:{}".format(nso_host, nso_port)
+nso_user = "admin"
+nso_pass = "admin"
 
 
 # Connect to controller & create client session
@@ -19,23 +30,27 @@ path = os.path.dirname(os.path.abspath(__file__))
 def connect_controller(controller, controller_user, controller_password):
     return ClientLibrary(controller, controller_user, controller_password, ssl_verify=False)
 
+
 # Clean up VIRL labs
 def clean_up():
     pass
+
 
 # Gets lab list and select our desired lab
 # Returns: Lab object
 def get_my_lab(client, lab_name):
     labs = client.all_labs()
     for lab in labs:
-        if lab.name == lab_name or lab.id == "ca2afb":
+        if lab.name == lab_name or lab.id == "ae4a07":
         # if lab.name == lab_name:
             return client.join_existing_lab(lab.id, sync_lab=True)
+
 
 # Import lab from lab definition YAML file
 # Returns Lab object
 def import_lab(client, path):
     return client.import_lab_from_path(path)
+
 
 # Extract external connector addresses
 # Returns: list of dictionaries containing node, interface & address
@@ -56,6 +71,7 @@ def extract_addresses(lab):
                     "ned": ned_mapping(node.node_definition)})
     return addresses
 
+
 # Create a mapping of VIRL2 node definitions to NSO NEDs
 # Returns: dictionary of NED details
 def ned_mapping(node_definition):
@@ -72,6 +88,7 @@ def ned_mapping(node_definition):
                 'ned': "cisco-ios-cli-3.8",
                 'ns': "http://tail-f.com/ns/ned-id/cisco-ios-cli-3.8"}
 
+
 # Render NSO inventory template
 # Returns: rendered template object
 def render_template(template_filename, context):
@@ -81,6 +98,7 @@ def render_template(template_filename, context):
         trim_blocks=False)
     return environment.get_template(template_filename).render(context)
 
+
 # Create NSO inventory file
 def create_nso_inventory(addresses):
     output_filename = "virl2-nso-inventory.xml"
@@ -88,6 +106,12 @@ def create_nso_inventory(addresses):
     with open(output_filename, 'w') as f:
         xml = render_template('virl2-nso-template.xml', context)
         f.write(xml)
+
+
+# Start NSO
+def start_nso():
+    print(os.system("./setup.sh -n"))
+
 
 # Main function of setup app
 def main():
@@ -131,6 +155,9 @@ def main():
     print("Writing NSO inventory file")
     create_nso_inventory(addresses)
 
+    # Start NSO
+    print("Starting NSO")
+    start_nso()
 
 
 if __name__ == "__main__":
